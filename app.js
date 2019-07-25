@@ -7,31 +7,54 @@ app.use(express.static("public"));
 // Other Dependencies
 const request = require("request");
 const mysql = require("mysql");
+const tools = require("./tools.js");
+
 
 // Routes
 
 // Root Route
-app.get("/", function(req, res) {
-    var requestURL = "https://api.unsplash.com/photos/random?client_id=3226a01cbd2355ea2a0f1f63ca1901a8f8e4ffefeea76d6fe8a8532a2973fc1c&orientation=landscape";
-    request(requestURL, function (error, response, body) {
+app.get("/", async function(req, res) {
+    var imageURLs = await tools.getRandomImages_promise("", 1);
+    res.render("index", {"imageURL": imageURLs});
+}); // index
 
-        if (!error) {
-            // Extract URL for index.ejs
-            var parsedData = JSON.parse(body);
-            var imageURL = parsedData["urls"]["regular"];
-            res.render("index", {"imageURL": imageURL});
-        }
-        else {
-            // Print the error if one occurred
-            console.log('error:', error);
-            res.render("index", {"error": "Unable to access API"})
-        }
-        // Print the response status code if a response was received
-        // console.log('statusCode:', response && response.statusCode); 
-        // Log the response
-        // console.log('body:', body);
+
+app.get("/search", async function(req, res) {
+    //console.dir(req);
+    //console.log(req.query.keyword);
+
+    var keyword = req.query.keyword;
+    var imageURLs = await tools.getRandomImages_promise(keyword, 9);
+    console.log("imageURLs with Promises: " + imageURLs);
+    res.render("results", {"imageURLs": imageURLs});
+}) // search
+
+
+app.get("/api/updateFavorites", function(req, res) {
+    var conn = mysql.createConnection({
+        host: "localhost",
+        user: "root",
+        password: "rootroot",
+        database: "img_gallery"
     });
-});
+
+    var sql = "INSERT INTO favorites (imageURL, keyword) VALUES (?, ?)";
+    var sqlParams = [req.query.imageURL, req.query.keyword];
+
+    conn.connect( function(err) {
+        if (err) throw err;
+
+        conn.query(sql, sqlParams, function(err, result) {
+
+            if (err) throw err;
+
+        }); // query
+    }) // mysql connect
+
+    res.send("It works!");
+
+}) // updateFavorites
+
 
 // Local Server Listener
 const port = 8081;
