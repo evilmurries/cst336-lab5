@@ -1,5 +1,6 @@
 
 const request = require("request");
+const mysql = require("mysql");
 
 module.exports = {
 
@@ -46,6 +47,18 @@ getRandomImages_promise: function (keyword, imageCount) {
             }
         });
     }); // promise
-} // function
+}, // function
+
+
+// Create a connection to the database server
+createConnection: function() {
+    var conn = mysql.createConnection({
+        host: "localhost",
+        user: "root",
+        password: "rootroot",
+        database: "img_gallery"
+    });
+    return conn;
+}
 
 } // export

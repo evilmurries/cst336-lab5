@@ -26,22 +26,26 @@ app.get("/search", async function(req, res) {
     var keyword = req.query.keyword;
     var imageURLs = await tools.getRandomImages_promise(keyword, 9);
     console.log("imageURLs with Promises: " + imageURLs);
-    res.render("results", {"imageURLs": imageURLs});
+    res.render("results", {"imageURLs": imageURLs, "keyword": keyword});
 }) // search
 
 
 app.get("/api/updateFavorites", function(req, res) {
-    var conn = mysql.createConnection({
-        host: "localhost",
-        user: "root",
-        password: "rootroot",
-        database: "img_gallery"
-    });
 
-    var sql = "INSERT INTO favorites (imageURL, keyword) VALUES (?, ?)";
-    var sqlParams = [req.query.imageURL, req.query.keyword];
+    var conn = tools.createConnection();
 
-    conn.connect( function(err) {
+    var sql;
+    var sqlParams = [];
+
+    if (req.query.action == "add") {
+        sql = "INSERT INTO favorites (imageURL, keyword) VALUES (?, ?)";
+        sqlParams = [req.query.imageURL, req.query.keyword];
+    } else {
+        sql = "DELETE FROM favorites WHERE imageURL = ?"
+        sqlParams = [req.query.imageURL, req.query.keyword];
+    }
+
+    conn.connect(function(err) {
         if (err) throw err;
 
         conn.query(sql, sqlParams, function(err, result) {
@@ -53,7 +57,26 @@ app.get("/api/updateFavorites", function(req, res) {
 
     res.send("It works!");
 
-}) // updateFavorites
+}); // updateFavorites
+
+
+app.get("/displayKeywords", function(req, res) { 
+    var conn = tools.createConnection();
+    var sql = "SELECT DISTINCT keyword FROM favorites ORDER BY keyword";
+
+    conn.connect(function(err) {
+
+        if (err) throw err;
+
+        conn.query(sql, function(err, result) {
+            if (err) throw err;
+            res.render("favorites", {"rows" : result});
+            console.log(result);
+        })
+
+    })
+
+}); // displayFavorites
 
 
 // Local Server Listener
