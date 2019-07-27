@@ -15,7 +15,7 @@ const tools = require("./tools.js");
 // Root Route
 app.get("/", async function(req, res) {
     var imageURLs = await tools.getRandomImages_promise("", 1);
-    res.render("index", {"imageURL": imageURLs});
+    res.render("index", {"imageURLs": imageURLs});
 }); // index
 
 
@@ -60,7 +60,8 @@ app.get("/api/updateFavorites", function(req, res) {
 }); // updateFavorites
 
 
-app.get("/displayKeywords", function(req, res) { 
+app.get("/displayKeywords", async function(req, res) { 
+    var imageURLs = await tools.getRandomImages_promise("", 1);
     var conn = tools.createConnection();
     var sql = "SELECT DISTINCT keyword FROM favorites ORDER BY keyword";
 
@@ -70,8 +71,26 @@ app.get("/displayKeywords", function(req, res) {
 
         conn.query(sql, function(err, result) {
             if (err) throw err;
-            res.render("favorites", {"rows" : result});
+            res.render("favorites", {"rows" : result, "imageURLs": imageURLs});
             console.log(result);
+        })
+
+    })
+
+}); // displayKeywords
+
+app.get("/api/displayFavorites", function (req, res) {
+    var conn = tools.createConnection();
+    var sql = "SELECT imageURL FROM favorites WHERE keyword = ?";
+    var sqlParams = [req.query.keyword];
+
+    conn.connect(function(err, result) {
+        if (err) throw err;
+
+        conn.query(sql, sqlParams, function(err, result) {
+
+            if (err) throw err;
+            res.send(result);
         })
 
     })

@@ -2,16 +2,17 @@
 
 <form action="/search">
     <input type="text" id="keyword" value="<%=keyword%>" placeholder="Type Keyword" name="keyword"/>
-    <br />
     <button>Search</button>
-    <a href="/displayKeywords">See Favorites</a>
+    <a id="favLink" href="/displayKeywords">See Favorites</a>
 </form>
 
 <% imageURLs.forEach(function(imageURL, i) { %>
 
     <%- (i%3==0)?"<br />":'' %>
-    <img src='<%=imageURL%>' width='200' height='200'>
-    <img src="/img/fav_off.png" class="favoriteIcon" width="20">
+    <div class="imageContainer">
+        <img class="image" src='<%=imageURL%>' width='200' height='200'>
+        <img src="/img/fav_off.png" class="favoriteIcon" width="20">
+    </div>
 <% }) %>
 
 <% include partials/footer.ejs %>
