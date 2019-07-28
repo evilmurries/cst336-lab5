@@ -99,12 +99,14 @@ app.get("/api/displayFavorites", function (req, res) {
 
 
 // Local Server Listener
+/*
 const port = 8081;
 app.listen(port, "127.0.0.1", function() {
     console.log("Express Server is Running...");
 });
+*/
 
 // Heroku Server Deployment
-/*
-
-*/
+app.listen(process.env.PORT, process.env.IP, function() {
+    console.log("Running Express Server...");
+});
