@@ -42,7 +42,7 @@ app.get("/api/updateFavorites", function(req, res) {
         sqlParams = [req.query.imageURL, req.query.keyword];
     } else {
         sql = "DELETE FROM favorites WHERE imageURL = ?"
-        sqlParams = [req.query.imageURL, req.query.keyword];
+        sqlParams = [req.query.imageURL];
     }
 
     conn.connect(function(err) {
@@ -54,9 +54,6 @@ app.get("/api/updateFavorites", function(req, res) {
 
         }); // query
     }) // mysql connect
-
-    res.send("It works!");
-
 }); // updateFavorites
 
 
