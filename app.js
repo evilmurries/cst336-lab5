@@ -25,7 +25,7 @@ app.get("/search", async function(req, res) {
 
     var keyword = req.query.keyword;
     var imageURLs = await tools.getRandomImages_promise(keyword, 9);
-    console.log("imageURLs with Promises: " + imageURLs);
+    //console.log("imageURLs with Promises: " + imageURLs);
     res.render("results", {"imageURLs": imageURLs, "keyword": keyword});
 }) // search
 
@@ -45,7 +45,7 @@ app.get("/api/updateFavorites", function(req, res) {
         sqlParams = [req.query.imageURL];
     }
 
-    conn.connect(function(err) {
+    conn.getConnection(function(err) {
         if (err) throw err;
 
         conn.query(sql, sqlParams, function(err, result) {
@@ -62,14 +62,14 @@ app.get("/displayKeywords", async function(req, res) {
     var conn = tools.createConnection();
     var sql = "SELECT DISTINCT keyword FROM favorites ORDER BY keyword";
 
-    conn.connect(function(err) {
+    conn.getConnection(function(err) {
 
         if (err) throw err;
 
         conn.query(sql, function(err, result) {
             if (err) throw err;
             res.render("favorites", {"rows" : result, "imageURLs": imageURLs});
-            console.log(result);
+            //console.log(result);
         })
 
     })
@@ -81,7 +81,7 @@ app.get("/api/displayFavorites", function (req, res) {
     var sql = "SELECT imageURL FROM favorites WHERE keyword = ?";
     var sqlParams = [req.query.keyword];
 
-    conn.connect(function(err, result) {
+    conn.getConnection(function(err, result) {
         if (err) throw err;
 
         conn.query(sql, sqlParams, function(err, result) {
