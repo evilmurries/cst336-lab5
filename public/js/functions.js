@@ -8,10 +8,10 @@ $(document).ready(function() {
         var imageURL = $(this).prev().attr("src");
 
         if ($(this).attr("src") == "img/fav_off.png") {
-            $(this).attr("src", "/img/fav_on.png");
+            $(this).attr("src", "img/fav_on.png");
             updateFavorites("add", imageURL);
         } else {
-            $(this).attr("src", "/img/fav_off.png");
+            $(this).attr("src", "img/fav_off.png");
             updateFavorites("delete", imageURL);
         }
     }) // end event

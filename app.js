@@ -42,6 +42,7 @@ app.get("/api/updateFavorites", function(req, res) {
         sqlParams = [req.query.imageURL, req.query.keyword];
     } else {
         sql = "DELETE FROM favorites WHERE imageURL = ?"
+        console.log(req.query.imageURL);
         sqlParams = [req.query.imageURL];
     }
 
